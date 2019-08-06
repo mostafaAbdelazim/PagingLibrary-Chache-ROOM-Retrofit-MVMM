@@ -16,9 +16,6 @@
 
 package com.isca.iscagroup.repositroy
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
 import com.isca.iscagroup.database.PhotosDatabase
 import com.isca.iscagroup.network.Network
@@ -33,15 +30,11 @@ class PhotoBoundaryCallback(private val database: PhotosDatabase) : PagedList.Bo
     companion object {
         private const val NETWORK_PAGE_SIZE = 50
     }
-
-    private val _loadingProgressBar = MutableLiveData<Boolean>().apply { value = false }
-    val loadingProgressBar: LiveData<Boolean>
-        get() = _loadingProgressBar
-
     private var lastRequestedPage = 1
     private var pageLimit = 2
     override fun onZeroItemsLoaded() {
         super.onZeroItemsLoaded()
+        lastRequestedPage = 1
         requestAndSavePhotos()
     }
 
@@ -55,7 +48,6 @@ class PhotoBoundaryCallback(private val database: PhotosDatabase) : PagedList.Bo
         GlobalScope.launch {
             if (isRequestInProgress) return@launch
             isRequestInProgress = true
-            _loadingProgressBar.postValue(true)
             try {
                 if (isOnline()) {
                     if (lastRequestedPage < pageLimit) {
@@ -64,22 +56,14 @@ class PhotoBoundaryCallback(private val database: PhotosDatabase) : PagedList.Bo
                                 lastRequestedPage.toString()).await()
 
                         val result = photos.photos
-//                        if (result.photo.isNotEmpty() && lastRequestedPage == 1) {
-//                            database.photoDao.deleteOldCache()
-//                            Log.e("ISCA", "Old cache deleted1")
-//                        }
-                        Log.e("ISCA", "photos from page $lastRequestedPage")
                         lastRequestedPage = result.page + 1
                         pageLimit = result.pages
                         database.photoDao.insertAll(result.photo)
-                        Log.e("ISCA", "new data inserted into the data base , next page to request $lastRequestedPage")
                         isRequestInProgress = false
-                        _loadingProgressBar.postValue(false)
                     }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                _loadingProgressBar.postValue(false)
                 isRequestInProgress = false
             }
 

@@ -23,7 +23,7 @@ import java.net.Socket
 const val BASE_URL = "https://api.flickr.com/services/"
 const val SEARCH_METHOD = "flickr.photos.getRecent"
 const val API_KEY = "26e248a131774a38de86823ec88bc4a5"
-const val EXTRA_S = "url_q,url_l"
+const val EXTRA_S = "license, date_upload, date_taken, owner_name, icon_server, original_format, last_update, geo, tags, machine_tags, o_dims, views, media, url_sq, url_t, url_s, url_q, url_m, url_n, url_z, url_c, url_l, url_o"
 const val PER_PAGE = 20
 const val FORMAT = "json"
 const val NOJSONCALLBACK = "1"

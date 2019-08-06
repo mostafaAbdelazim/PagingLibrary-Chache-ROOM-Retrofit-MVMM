@@ -31,7 +31,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
-import com.google.android.material.snackbar.Snackbar
 import com.isca.iscagroup.R
 import com.isca.iscagroup.adapter.MainAdapter
 import com.isca.iscagroup.database.getDatabase
@@ -54,11 +53,7 @@ class MainFragment : Fragment() {
         mainViewModel.pagedList.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 adapter?.submitList(it)
-                if (it.isNotEmpty()) {
-                    progress.visibility = View.GONE
-                } else {
-                    progress.visibility = View.VISIBLE
-                }
+                refreshLayout.isRefreshing = it.isEmpty()
             }
         })
     }
@@ -74,18 +69,16 @@ class MainFragment : Fragment() {
         activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         setupDialog()
         adapter = MainAdapter(MainAdapter.PhotoClick {
-            if (it.url_l.isNotEmpty()) {
-                view?.findNavController()?.navigate(MainFragmentDirections.actionMainFragmentToPreviewFragment(it))
-            } else {
-                snackBarSetup("Image not available")
-            }
+            view?.findNavController()?.navigate(MainFragmentDirections.actionMainFragmentToPreviewFragment(it))
         }, MainAdapter.PhotoLongClick {
             dialog.dialogTitle.text = it.title
-            dialog.values.text = "${it.id}\n\n${it.owner}\n\n${it.height_l}\n\n${it.width_l}"
+            dialog.values.text = "${it.id}\n\n${it.ownername}\n\n${it.height_l}\n\n${it.width_l}\n\n${it.originalformat}"
             dialog.show()
         })
         binding.mainRecyclerView.adapter = adapter
-
+        binding.refreshLayout.setOnRefreshListener {
+            mainViewModel.refresh()
+        }
         return binding.root
     }
 
@@ -95,13 +88,5 @@ class MainFragment : Fragment() {
         dialog.setContentView(R.layout.popup_dialog)
         dialog.setCanceledOnTouchOutside(true)
         dialog.window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-    }
-
-    private fun snackBarSetup(msg: String) {
-        Snackbar.make(
-                activity!!.findViewById(android.R.id.content),
-                msg,
-                Snackbar.LENGTH_LONG
-        ).show()
     }
 }

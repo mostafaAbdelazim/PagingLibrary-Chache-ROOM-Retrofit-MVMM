@@ -25,4 +25,17 @@ class PreviewViewModel(val photo: Photo) : ViewModel() {
     private val _clickedPhoto = MutableLiveData<Photo>().apply { value = photo }
     val clickedPhoto: LiveData<Photo>
         get() = _clickedPhoto
+    private val _highestURL = MutableLiveData<String>()
+    val highestURL: LiveData<String>
+        get() = _highestURL
+
+    init {
+        val listOfUrls = listOf(photo.url_o, photo.url_l, photo.url_z, photo.url_n, photo.url_m, photo.url_q)
+        for (url in listOfUrls) {
+            if (url.isNotEmpty()) {
+                _highestURL.value = url
+                break
+            }
+        }
+    }
 }

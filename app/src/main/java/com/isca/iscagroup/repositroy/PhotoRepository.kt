@@ -22,7 +22,7 @@ import androidx.paging.PagedList
 import com.isca.iscagroup.database.PhotosDatabase
 import com.isca.iscagroup.network.Photo
 
-class PhotoRepository( val database: PhotosDatabase) {
+class PhotoRepository(val database: PhotosDatabase) {
 
     companion object {
         private const val DATABASE_PAGE_SIZE = 20

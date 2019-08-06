@@ -38,7 +38,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-        android:text="ID:\n\nOwner:\n\nHeight:\n\nWidth:"
+        android:text="ID:\n\nOwner:\n\nHeight:\n\nWidth:\n\nFormat:"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/dialogTitle"
@@ -49,7 +49,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="48dp"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         app:layout_constraintBottom_toBottomOf="@+id/titles"
         app:layout_constraintStart_toEndOf="@+id/titles"
         app:layout_constraintTop_toTopOf="@+id/titles" />

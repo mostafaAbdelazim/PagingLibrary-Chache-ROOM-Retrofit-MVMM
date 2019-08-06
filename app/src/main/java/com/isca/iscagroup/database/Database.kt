@@ -27,7 +27,7 @@ interface PhotosDao {
     @Query("select * from photo")
     fun getPhotos(): DataSource.Factory<Int, Photo>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertAll(photos: List<Photo>)
 
     @Query("delete from photo")

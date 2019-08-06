@@ -34,6 +34,10 @@ class MainViewModel(private var photoRepository: PhotoRepository) : ViewModel() 
     val pagedList: LiveData<PagedList<Photo>> = photoRepository.photos
 
     init {
+        refresh()
+    }
+
+    fun refresh() {
         coroutine.launch {
             if (isOnline()) {
                 photoRepository.database.photoDao.deleteOldCache()
