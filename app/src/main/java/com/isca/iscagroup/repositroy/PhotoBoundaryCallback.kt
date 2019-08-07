@@ -16,7 +16,6 @@
 
 package com.isca.iscagroup.repositroy
 
-import android.util.Log
 import androidx.paging.PagedList
 import com.isca.iscagroup.database.PhotosDatabase
 import com.isca.iscagroup.network.Network
@@ -85,9 +84,7 @@ class PhotoBoundaryCallback(private val database: PhotosDatabase) : PagedList.Bo
                         lastRequestedPage = result.page + 1
                         pageLimit = result.pages
                         database.photoDao.deleteOldCache()
-                        Log.e("ISCA", "Old cache deleted2")
                         database.photoDao.insertAll(result.photo)
-                        Log.e("ISCA", "inserted fresh photos2")
                         isRequestInProgress = false
                     }
                 }
