@@ -17,31 +17,34 @@
 package com.isca.iscagroup.ui.fragment.preview
 
 
+import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
-import com.isca.iscagroup.R
 import com.isca.iscagroup.databinding.FragmentPreviewBinding
 import com.isca.iscagroup.viewmodel.preview.PreviewViewModel
 import com.isca.iscagroup.viewmodel.preview.PreviewViewModelFactory
+import kotlin.math.abs
+
 
 class PreviewFragment : Fragment() {
+    private var downY: Float = 0.toFloat()
+    private var upY: Float = 0.toFloat()
+
     private val args by navArgs<PreviewFragmentArgs>()
     private val previewViewModel by viewModels<PreviewViewModel> {
         PreviewViewModelFactory(args.photo)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val binding = DataBindingUtil.inflate<FragmentPreviewBinding>(inflater, R.layout.fragment_preview, container, false).apply {
+        val binding = DataBindingUtil.inflate<FragmentPreviewBinding>(inflater, com.isca.iscagroup.R.layout.fragment_preview, container, false).apply {
             lifecycleOwner = this@PreviewFragment
             viewModel = previewViewModel
         }
@@ -51,7 +54,27 @@ class PreviewFragment : Fragment() {
         binding.close.setOnClickListener {
             view?.findNavController()?.popBackStack()
         }
-
+        binding.fullScreenImage.setOnTouchListener(object : View.OnTouchListener {
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                when (event?.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        downY = event.y
+                        return true
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        upY = event.y
+                        val deltaY = downY - upY
+                        if (abs(deltaY) > resources.displayMetrics.heightPixels / 6) {
+                            if (deltaY > 0) {
+                                view?.findNavController()?.popBackStack()
+                                return true
+                            }
+                        }
+                    }
+                }
+                return false
+            }
+        })
         return binding.root
     }
 }

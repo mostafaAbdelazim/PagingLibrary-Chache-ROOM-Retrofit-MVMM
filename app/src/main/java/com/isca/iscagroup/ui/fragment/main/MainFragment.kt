@@ -56,6 +56,14 @@ class MainFragment : Fragment() {
                 refreshLayout.isRefreshing = it.isEmpty()
             }
         })
+        mainViewModel.offline.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                if (it) {
+                    refreshLayout.isRefreshing = false
+                    mainViewModel.setNullOffline()
+                }
+            }
+        })
     }
 
     @SuppressLint("SetTextI18n")
@@ -72,13 +80,14 @@ class MainFragment : Fragment() {
             view?.findNavController()?.navigate(MainFragmentDirections.actionMainFragmentToPreviewFragment(it))
         }, MainAdapter.PhotoLongClick {
             dialog.dialogTitle.text = it.title
-            dialog.values.text = "${it.id}\n\n${it.ownername}\n\n${it.height_l}\n\n${it.width_l}\n\n${it.originalformat}"
+            dialog.values.text = "${it.id}\n\n${it.ownername}\n\n${it.views}\n\n${it.datetaken}\n\n${it.height_l}\n\n${it.width_l}\n\n${it.originalformat}\n\n${it.tags}"
             dialog.show()
         })
         binding.mainRecyclerView.adapter = adapter
         binding.refreshLayout.setOnRefreshListener {
             mainViewModel.refresh()
         }
+        binding.refreshLayout.setColorSchemeResources(R.color.colorPrimary, R.color.colorAccent)
         return binding.root
     }
 

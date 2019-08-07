@@ -15,10 +15,7 @@
   -->
 
 <resources>
-    <string name="app_name">ISCA</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_name">Flickr Sample</string>
     <string name="full_screen_image">full screen image</string>
     <string name="close">close</string>
 </resources>

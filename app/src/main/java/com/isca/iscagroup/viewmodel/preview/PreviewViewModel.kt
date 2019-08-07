@@ -30,7 +30,7 @@ class PreviewViewModel(val photo: Photo) : ViewModel() {
         get() = _highestURL
 
     init {
-        val listOfUrls = listOf(photo.url_o, photo.url_l, photo.url_z, photo.url_n, photo.url_m, photo.url_q)
+        val listOfUrls = listOf(photo.url_o, photo.url_l, photo.url_z, photo.url_n, photo.url_m)
         for (url in listOfUrls) {
             if (url.isNotEmpty()) {
                 _highestURL.value = url

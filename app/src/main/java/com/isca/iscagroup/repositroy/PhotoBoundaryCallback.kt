@@ -16,6 +16,7 @@
 
 package com.isca.iscagroup.repositroy
 
+import android.util.Log
 import androidx.paging.PagedList
 import com.isca.iscagroup.database.PhotosDatabase
 import com.isca.iscagroup.network.Network
@@ -30,19 +31,19 @@ class PhotoBoundaryCallback(private val database: PhotosDatabase) : PagedList.Bo
     companion object {
         private const val NETWORK_PAGE_SIZE = 50
     }
+
     private var lastRequestedPage = 1
     private var pageLimit = 2
     override fun onZeroItemsLoaded() {
         super.onZeroItemsLoaded()
         lastRequestedPage = 1
-        requestAndSavePhotos()
+        refreshAndSavePhotos()
     }
 
     override fun onItemAtEndLoaded(itemAtEnd: Photo) {
         super.onItemAtEndLoaded(itemAtEnd)
         requestAndSavePhotos()
     }
-
 
     private fun requestAndSavePhotos() {
         GlobalScope.launch {
@@ -66,7 +67,34 @@ class PhotoBoundaryCallback(private val database: PhotosDatabase) : PagedList.Bo
                 e.printStackTrace()
                 isRequestInProgress = false
             }
+        }
+    }
 
+    private fun refreshAndSavePhotos() {
+        GlobalScope.launch {
+            if (isRequestInProgress) return@launch
+            isRequestInProgress = true
+            try {
+                if (isOnline()) {
+                    if (lastRequestedPage < pageLimit) {
+                        val photos = Network.retrofitService.searchAsync(SEARCH_METHOD, API_KEY,
+                                EXTRA_S, FORMAT, NOJSONCALLBACK, NETWORK_PAGE_SIZE.toString(),
+                                lastRequestedPage.toString()).await()
+
+                        val result = photos.photos
+                        lastRequestedPage = result.page + 1
+                        pageLimit = result.pages
+                        database.photoDao.deleteOldCache()
+                        Log.e("ISCA", "Old cache deleted2")
+                        database.photoDao.insertAll(result.photo)
+                        Log.e("ISCA", "inserted fresh photos2")
+                        isRequestInProgress = false
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                isRequestInProgress = false
+            }
         }
     }
 }

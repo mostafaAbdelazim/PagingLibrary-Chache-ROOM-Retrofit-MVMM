@@ -16,8 +16,8 @@
 
 package com.isca.iscagroup.viewmodel.main
 
-import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagedList
 import com.isca.iscagroup.network.Photo
@@ -33,15 +33,16 @@ class MainViewModel(private var photoRepository: PhotoRepository) : ViewModel() 
     private val coroutine = CoroutineScope(job + Dispatchers.IO)
     val pagedList: LiveData<PagedList<Photo>> = photoRepository.photos
 
-    init {
-        refresh()
-    }
+    private val _offline = MutableLiveData<Boolean>()
+    val offline: LiveData<Boolean>
+        get() = _offline
 
     fun refresh() {
         coroutine.launch {
             if (isOnline()) {
                 photoRepository.database.photoDao.deleteOldCache()
-                Log.e("ISCA", "Old cache deleted2")
+            } else {
+                _offline.postValue(true)
             }
         }
     }
@@ -49,5 +50,9 @@ class MainViewModel(private var photoRepository: PhotoRepository) : ViewModel() 
     override fun onCleared() {
         super.onCleared()
         job.cancel()
+    }
+
+    fun setNullOffline() {
+        _offline.value = null
     }
 }

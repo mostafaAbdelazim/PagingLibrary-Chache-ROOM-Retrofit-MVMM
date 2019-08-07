@@ -16,7 +16,6 @@
 
 package com.isca.iscagroup.adapter
 
-import android.view.View
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
@@ -28,13 +27,12 @@ fun setImageUrl(imageView: ImageView, url: String?) {
     url?.let {
         if (url.isEmpty()) {
             imageView.setImageResource(R.drawable.ic_broken_image_black_24dp)
+            imageView.scaleType = ImageView.ScaleType.CENTER_INSIDE
         } else {
-            Glide.with(imageView.context).applyDefaultRequestOptions(RequestOptions().placeholder(R.drawable.ic_image_black_24dp).error(R.drawable.ic_signal_wifi_off_black_24dp)).load(url).into(imageView)
+            Glide.with(imageView.context).applyDefaultRequestOptions(RequestOptions()
+                    .placeholder(R.drawable.ic_image_black_24dp)
+                    .error(R.drawable.ic_signal_wifi_off_black_24dp))
+                    .load(url).into(imageView)
         }
     }
-}
-
-@BindingAdapter("hideIfFalse")
-fun hideView(view: View, boolean: Boolean) {
-    view.visibility = if (boolean) View.VISIBLE else View.INVISIBLE
 }

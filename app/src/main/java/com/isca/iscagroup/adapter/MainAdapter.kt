@@ -53,7 +53,8 @@ class MainAdapter(private val onClickListener: PhotoClick, private val onLongCli
         val photo = getItem(position)
         if (photo != null) {
             holder.viewDataBinding.also {
-                if (photo.title.isEmpty()) photo.title = "No title provided"
+                if (photo.title.isEmpty()) photo.title = "Untitled"
+                if (photo.tags.isEmpty()) photo.tags = "No tags"
                 it.photo = photo
                 it.root.setOnClickListener { onClickListener.onClick(photo) }
                 it.root.setOnLongClickListener {
