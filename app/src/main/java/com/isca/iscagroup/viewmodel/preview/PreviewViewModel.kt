@@ -20,8 +20,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.isca.iscagroup.network.Photo
+import com.isca.iscagroup.utils.isOnline
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class PreviewViewModel(val photo: Photo) : ViewModel() {
+    private val job = Job()
+    private val coroutines = CoroutineScope(job + Dispatchers.IO)
     private val _clickedPhoto = MutableLiveData<Photo>().apply { value = photo }
     val clickedPhoto: LiveData<Photo>
         get() = _clickedPhoto
@@ -30,12 +37,23 @@ class PreviewViewModel(val photo: Photo) : ViewModel() {
         get() = _highestURL
 
     init {
-        val listOfUrls = listOf(photo.url_o, photo.url_l, photo.url_z, photo.url_n, photo.url_m)
-        for (url in listOfUrls) {
-            if (url.isNotEmpty()) {
-                _highestURL.value = url
-                break
+        coroutines.launch {
+            if (isOnline()) {
+                val listOfUrls = listOf(photo.url_o, photo.url_l, photo.url_z, photo.url_n, photo.url_m)
+                for (url in listOfUrls) {
+                    if (url.isNotEmpty()) {
+                        _highestURL.postValue(url)
+                        break
+                    }
+                }
+            } else {
+                _highestURL.postValue(photo.url_m)
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        job.cancel()
     }
 }

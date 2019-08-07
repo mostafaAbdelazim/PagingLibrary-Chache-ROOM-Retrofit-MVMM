@@ -27,7 +27,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorAccent"
+        android:background="@color/background"
         tools:context=".ui.fragment.main.MainFragment">
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
